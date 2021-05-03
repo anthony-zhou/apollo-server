@@ -1,4 +1,4 @@
-import { advanceTimeBy, mockDate, unmockDate } from '__mocks__/date';
+import { advanceTimeBy, mockDate, unmockDate } from './__mocks__/date';
 import { TestableKeyValueCache } from '../';
 
 export function testKeyValueCache_Basics(keyValueCache: TestableKeyValueCache) {

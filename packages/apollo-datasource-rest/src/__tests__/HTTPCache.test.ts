@@ -1,11 +1,12 @@
-import { fetch, Request, Response } from '__mocks__/apollo-server-env';
+import { fetch, Request } from './__mocks__/apollo-server-env';
 
-import { mockDate, unmockDate, advanceTimeBy } from '__mocks__/date';
+import { mockDate, unmockDate, advanceTimeBy } from './__mocks__/date';
 
 import { HTTPCache } from '../HTTPCache';
+import { MapKeyValueCache } from './MapKeyValueCache';
 
 describe('HTTPCache', () => {
-  let store: Map<string, string>;
+  let store: MapKeyValueCache<string>;
   let httpCache: HTTPCache;
 
   beforeAll(() => {
@@ -15,7 +16,7 @@ describe('HTTPCache', () => {
   beforeEach(() => {
     fetch.mockReset();
 
-    store = new Map();
+    store = new MapKeyValueCache<string>();
     httpCache = new HTTPCache(store as any);
   });
 
@@ -195,7 +196,7 @@ describe('HTTPCache', () => {
       );
 
       await httpCache.fetch(new Request('https://api.example.com/people/1'), {
-        cacheOptions: (response: Response, request: Request) => ({
+        cacheOptions: () => ({
           ttl: 30,
         }),
       });
@@ -218,7 +219,7 @@ describe('HTTPCache', () => {
       );
 
       await httpCache.fetch(new Request('https://api.example.com/people/1'), {
-        cacheOptions: (response: Response, request: Request) => ({
+        cacheOptions: () => ({
           ttl: 0,
         }),
       });
@@ -397,7 +398,7 @@ describe('HTTPCache', () => {
     );
 
     expect(fetch.mock.calls.length).toEqual(2);
-    expect(fetch.mock.calls[1][0].headers.get('If-None-Match')).toEqual('foo');
+    expect((fetch.mock.calls[1][0] as Request).headers.get('If-None-Match')).toEqual('foo');
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toEqual({ name: 'Ada Lovelace' });
@@ -442,7 +443,7 @@ describe('HTTPCache', () => {
     );
 
     expect(fetch.mock.calls.length).toEqual(2);
-    expect(fetch.mock.calls[1][0].headers.get('If-None-Match')).toEqual('foo');
+    expect((fetch.mock.calls[1][0] as Request).headers.get('If-None-Match')).toEqual('foo');
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toEqual({ name: 'Alan Turing' });
