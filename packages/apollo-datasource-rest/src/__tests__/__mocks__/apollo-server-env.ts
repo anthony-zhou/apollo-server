@@ -10,12 +10,12 @@ import {
   URLSearchParams,
 } from 'apollo-server-env';
 
-interface FetchMock extends jest.Mock<ReturnType<typeof fetch>, Parameters<typeof fetch>> {
+interface FetchMock extends jest.MockedFunction<typeof fetch> {
   mockResponseOnce(data?: any, headers?: HeadersInit, status?: number): this;
   mockJSONResponseOnce(data?: object, headers?: HeadersInit): this;
 }
 
-const mockFetch = jest.fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>(fetch) as FetchMock;
+const mockFetch = (jest.fn(fetch) as unknown) as FetchMock;
 
 mockFetch.mockResponseOnce = (
   data?: BodyInit,
@@ -54,4 +54,12 @@ const env = {
 
 jest.doMock('apollo-server-env', () => env);
 
-export = env;
+export {
+  mockFetch as fetch,
+  Request,
+  Response,
+  Body,
+  Headers,
+  URL,
+  URLSearchParams,
+};

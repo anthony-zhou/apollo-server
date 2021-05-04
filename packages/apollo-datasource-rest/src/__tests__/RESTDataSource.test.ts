@@ -1,4 +1,4 @@
-import { fetch, URL } from './__mocks__/apollo-server-env';
+import { fetch, URL, Request } from './__mocks__/apollo-server-env';
 
 import {
   ApolloError,
